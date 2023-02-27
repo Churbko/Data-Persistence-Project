@@ -5,20 +5,26 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
+    private AudioSource audioSource;
     private Rigidbody m_Rigidbody;
+    public AudioClip clipPong;//assign
+    public AudioClip clipTic;//assign
+
 
     void Start()
     {
         m_Rigidbody = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
+        
     }
-    
+
     private void OnCollisionExit(Collision other)
     {
         var velocity = m_Rigidbody.velocity;
-        
+
         //after a collision we accelerate a bit
         velocity += velocity.normalized * 0.01f;
-        
+
         //check if we are not going totally vertically as this would lead to being stuck, we add a little vertical force
         if (Vector3.Dot(velocity.normalized, Vector3.up) < 0.1f)
         {
@@ -32,5 +38,20 @@ public class Ball : MonoBehaviour
         }
 
         m_Rigidbody.velocity = velocity;
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.name == "Paddle")
+        {
+            //play sound
+            audioSource.PlayOneShot(clipPong);
+        }
+
+        else
+        {
+            //play different sound
+            audioSource.PlayOneShot(clipTic);
+        }
     }
 }
